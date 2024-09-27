@@ -9,6 +9,8 @@ const initialCoins = [
   { label: 'DOT/USDT', value: 'dotusdt' }
 ];
 
+const MAX_CANDLES = 50; 
+
 const BinanceMarketData = () => {
   const [coins, setCoins] = useState(initialCoins); 
   const [selectedCoin, setSelectedCoin] = useState('ethusdt');
@@ -29,8 +31,8 @@ const BinanceMarketData = () => {
     loadSavedData(selectedCoin, selectedInterval);
     
     ws.current = connectWebSocket(selectedCoin, selectedInterval, (newCandle) => {
-      setChartData((prevData) => {
-        const updatedData = [...(prevData[selectedCoin] || []), newCandle];
+    setChartData((prevData) => {
+        const updatedData = [...(prevData[selectedCoin] || []), newCandle].slice(-MAX_CANDLES);
         localStorage.setItem(`${selectedCoin}_${selectedInterval}`, JSON.stringify(updatedData));
         return { ...prevData, [selectedCoin]: updatedData };
       });
